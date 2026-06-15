@@ -1,419 +1,638 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Security Container</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Container</title>
+  <!-- Bootstrap используется для оформления таблиц, карточек и формы -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap используется для оформления таблиц, карточек и формы -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.js используется для построения диаграмм -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Chart.js используется для построения диаграмм -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #eef3f8;
+      color: #1f2937;
+      font-family: Arial, sans-serif;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: white;
+      border-radius: 18px;
+      padding: 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.22);
+    }
+
+    .page-header h2 {
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    .page-header p {
+      color: #dbeafe;
+      margin-bottom: 0;
+    }
+
+    .card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 700;
+      color: #111827;
+      padding: 16px 20px;
+    }
+
+    .card-body {
+      padding: 22px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .form-control,
+    .form-select {
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      padding: 10px 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 0.18rem rgba(37, 99, 235, 0.18);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      border: none;
+      border-radius: 12px;
+      padding: 11px 22px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    }
+
+    .summary-card {
+      min-height: 135px;
+      border-left: 6px solid #2563eb;
+    }
+
+    .summary-card h5 {
+      color: #64748b;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .summary-card h3 {
+      font-size: 34px;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+
+    .summary-total {
+      border-left-color: #2563eb;
+    }
+
+    .summary-safe {
+      border-left-color: #16a34a;
+    }
+
+    .summary-safe h3 {
+      color: #16a34a;
+    }
+
+    .summary-unsafe {
+      border-left-color: #dc2626;
+    }
+
+    .summary-unsafe h3 {
+      color: #dc2626;
+    }
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table thead th {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #1e293b;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .table tbody td {
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f8fafc;
+    }
+
+    .status-safe {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .status-unsafe {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .chart-card canvas {
+      max-height: 360px;
+    }
+
+    .section-note {
+      color: #64748b;
+      font-size: 14px;
+    }
+  </style>
   </head>
-
   <body>
     <div class="container mt-4 mb-5">
-      <h2><strong>Контейнер безопасности Марикян А.П.</strong></h2>
+      <div class="page-header">
+        <h2><strong>Контейнер безопасности Марикян А.П.</strong></h2>
+        <p>
+          Проверка мобильных устройств перед выполнением функции «Подписать документ»
+        </p>
+      </div>
+        <!-- Блок ручного ввода данных устройства -->
+        <div class="card mt-4">
+          <div class="card-header">
+            Добавление устройства для проверки
+          </div>
 
-      <p class="text-muted">
-        Проверка мобильных устройств перед выполнением функции «Подписать документ»
-      </p>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Название устройства</label>
+                <input type="text" id="deviceName" class="form-control" value="New Android Device">
+              </div>
 
-      <!-- Блок ручного ввода данных устройства -->
-      <div class="card mt-4">
-        <div class="card-header">
-          Добавление устройства для проверки
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Версия ОС</label>
+                <input type="number" id="osVersion" class="form-control" value="11">
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Безопасное состояние ОС</label>
+                <select id="osSecure" class="form-select">
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Root/Jailbreak</label>
+                <select id="rootDetected" class="form-select">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Accessibility</label>
+                <select id="accessibilityEnabled" class="form-select">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Overlay</label>
+                <select id="overlayEnabled" class="form-select">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Управление экраном</label>
+                <select id="screenControlEnabled" class="form-select">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Цифровая подпись действительна</label>
+                <select id="digitalSignatureValid" class="form-select">
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Файлы приложения изменены</label>
+                <select id="filesModified" class="form-select">
+                  <option value="false">False</option>
+                  <option value="true">True</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="addDevice()">Проверить и добавить устройство</button>
+          </div>
         </div>
 
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Название устройства</label>
-              <input type="text" id="deviceName" class="form-control" value="New Android Device">
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Версия ОС</label>
-              <input type="number" id="osVersion" class="form-control" value="11">
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Безопасное состояние ОС</label>
-              <select id="osSecure" class="form-select">
-                <option value="true">True</option>
-                <option value="false">False</option>
-              </select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Root/Jailbreak</label>
-              <select id="rootDetected" class="form-select">
-                <option value="false">False</option>
-                <option value="true">True</option>
-              </select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Accessibility</label>
-              <select id="accessibilityEnabled" class="form-select">
-                <option value="false">False</option>
-                <option value="true">True</option>
-              </select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Overlay</label>
-              <select id="overlayEnabled" class="form-select">
-                <option value="false">False</option>
-                <option value="true">True</option>
-              </select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Управление экраном</label>
-              <select id="screenControlEnabled" class="form-select">
-                <option value="false">False</option>
-                <option value="true">True</option>
-              </select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Цифровая подпись действительна</label>
-              <select id="digitalSignatureValid" class="form-select">
-                <option value="true">True</option>
-                <option value="false">False</option>
-              </select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Файлы приложения изменены</label>
-              <select id="filesModified" class="form-select">
-                <option value="false">False</option>
-                <option value="true">True</option>
-              </select>
+        <!-- Сводная информация -->
+        <div class="row mt-4">
+          <div class="col-md-4 mb-3">
+            <div class="card summary-card summary-total">
+              <div class="card-body">
+                <h5>Всего устройств</h5>
+                <h3 id="totalDevices">{{ total_devices }}</h3>
+              </div>
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="addDevice()">Проверить и добавить устройство</button>
+          <div class="col-md-4 mb-3">
+            <div class="card summary-card summary-safe">
+              <div class="card-body">
+                <h5>Безопасных</h5>
+                <h3 id="safeDevices">{{ safe_count }}</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <div class="card summary-card summary-unsafe">
+              <div class="card-body">
+                <h5>Небезопасных</h5>
+                <h3 id="unsafeDevices">{{ unsafe_count }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Таблица результатов проверки -->
+        <div class="card mt-4">
+          <div class="card-header">
+            Сравнительная таблица устройств
+          </div>
+
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Устройство</th>
+                    <th>Версия ОС</th>
+                    <th>Root/Jailbreak</th>
+                    <th>Accessibility</th>
+                    <th>Overlay</th>
+                    <th>Проблем</th>
+                    <th>Статус</th>
+                    <th>Решение</th>
+                  </tr>
+                </thead>
+
+                <tbody id="deviceTable">
+                  {% for device in devices %}
+                  <tr>
+                    <td>{{ device.device_name }}</td>
+                    <td>{{ device.os_version }}</td>
+                    <td>{{ device.root_detected }}</td>
+                    <td>{{ device.accessibility_enabled }}</td>
+                    <td>{{ device.overlay_enabled }}</td>
+                    <td>{{ device.problems_count }}</td>
+                    <td>
+                      {% if device.status == "Безопасно" %}
+                        <span class="status-safe">{{ device.status }}</span>
+                      {% else %}
+                        <span class="status-unsafe">{{ device.status }}</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ device.result }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Диаграмма количества проблем по устройствам -->
+        <div class="card chart-card mt-4">
+          <div class="card-header">
+            Диаграмма количества проблем по устройствам
+          </div>
+          <div class="card-body">
+            <canvas id="problemsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Круговая диаграмма безопасных и небезопасных устройств -->
+        <div class="card chart-card mt-4">
+          <div class="card-header">
+            Соотношение безопасных и небезопасных устройств
+          </div>
+          <div class="card-body">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Диаграмма распределения угроз -->
+        <div class="card chart-card mt-4">
+          <div class="card-header">
+            Распределение выявленных угроз по типам
+          </div>
+          <div class="card-body">
+            <canvas id="threatChart"></canvas>
+          </div>
         </div>
       </div>
 
-      <!-- Сводная информация -->
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <h5>Всего устройств</h5>
-              <h3 id="totalDevices">{{ total_devices }}</h3>
-            </div>
-          </div>
-        </div>
+      <script>
+        // Начальные данные передаются из Django-шаблона
+        let devices = [
+          {% for device in devices %}
+          {
+            device_name: "{{ device.device_name|escapejs }}",
+            os_version: {{ device.os_version }},
+            os_secure: {{ device.os_secure|yesno:"true,false" }},
+            root_detected: {{ device.root_detected|yesno:"true,false" }},
+            accessibility_enabled: {{ device.accessibility_enabled|yesno:"true,false" }},
+            overlay_enabled: {{ device.overlay_enabled|yesno:"true,false" }},
+            screen_control_enabled: {{ device.screen_control_enabled|yesno:"true,false" }},
+            digital_signature_valid: {{ device.digital_signature_valid|yesno:"true,false" }},
+            files_modified: {{ device.files_modified|yesno:"true,false" }},
+            problems_count: {{ device.problems_count }},
+            status: "{{ device.status|escapejs }}",
+            result: "{{ device.result|escapejs }}",
+            reasons: "{{ device.reasons|escapejs }}"
+          },
+          {% endfor %}
+        ];
 
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <h5>Безопасных</h5>
-              <h3 id="safeDevices">{{ safe_count }}</h3>
-            </div>
-          </div>
-        </div>
+        let problemsChart;
+        let statusChart;
+        let threatChart;
 
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <h5>Небезопасных</h5>
-              <h3 id="unsafeDevices">{{ unsafe_count }}</h3>
-            </div>
-          </div>
-        </div>
-      </div>
+        function toBoolean(value) {
+          return value === "true";
+        }
 
-      <!-- Таблица результатов проверки -->
-      <div class="card mt-4">
-        <div class="card-header">
-          Сравнительная таблица устройств
-        </div>
+        // Проверка устройства по правилам контейнера безопасности
+        function checkDevice(device) {
+          let reasons = [];
+          let threats = [];
 
-        <div class="card-body">
-          <table class="table table-bordered table-striped">
-            <thead>
+          if (device.os_version < 10) {
+            reasons.push("Версия ОС ниже допустимой");
+            threats.push("Версия ОС");
+          }
+
+          if (device.os_secure === false) {
+            reasons.push("Состояние ОС небезопасно");
+            threats.push("Состояние ОС");
+          }
+
+          if (device.root_detected === true) {
+            reasons.push("Обнаружены признаки root/jailbreak");
+            threats.push("Root/Jailbreak");
+          }
+
+          if (device.accessibility_enabled === true) {
+            reasons.push("Включена служба Accessibility");
+            threats.push("Accessibility");
+          }
+
+          if (device.overlay_enabled === true) {
+            reasons.push("Обнаружено overlay-наложение поверх экрана");
+            threats.push("Overlay");
+          }
+
+          if (device.screen_control_enabled === true) {
+            reasons.push("Обнаружено управление экраном");
+            threats.push("Управление экраном");
+          }
+
+          if (device.digital_signature_valid === false) {
+            reasons.push("Цифровая подпись приложения недействительна");
+            threats.push("Цифровая подпись");
+          }
+
+          if (device.files_modified === true) {
+            reasons.push("Обнаружена модификация файлов приложения");
+            threats.push("Модификация файлов");
+          }
+
+          device.problems_count = reasons.length;
+          device.status = reasons.length === 0 ? "Безопасно" : "Небезопасно";
+          device.result = reasons.length === 0 ? "Операция подписания разрешена" : "Операция подписания заблокирована";
+          device.reasons = reasons.length === 0 ? "Нарушений не обнаружено" : reasons.join("; ");
+          device.threats = threats;
+
+          return device;
+        }
+
+        // Добавление нового устройства из формы
+        function addDevice() {
+          let device = {
+            device_name: document.getElementById("deviceName").value,
+            os_version: Number(document.getElementById("osVersion").value),
+            os_secure: toBoolean(document.getElementById("osSecure").value),
+            root_detected: toBoolean(document.getElementById("rootDetected").value),
+            accessibility_enabled: toBoolean(document.getElementById("accessibilityEnabled").value),
+            overlay_enabled: toBoolean(document.getElementById("overlayEnabled").value),
+            screen_control_enabled: toBoolean(document.getElementById("screenControlEnabled").value),
+            digital_signature_valid: toBoolean(document.getElementById("digitalSignatureValid").value),
+            files_modified: toBoolean(document.getElementById("filesModified").value)
+          };
+
+          let checkedDevice = checkDevice(device);
+          devices.push(checkedDevice);
+
+          updateTable();
+          updateSummary();
+          updateCharts();
+        }
+
+        // Обновление таблицы результатов
+        function updateTable() {
+          let table = document.getElementById("deviceTable");
+          table.innerHTML = "";
+
+          devices.forEach(function(device) {
+            let statusClass = device.status === "Безопасно" ? "status-safe" : "status-unsafe";
+
+            table.innerHTML += `
               <tr>
-                <th>Устройство</th>
-                <th>Версия ОС</th>
-                <th>Root/Jailbreak</th>
-                <th>Accessibility</th>
-                <th>Overlay</th>
-                <th>Проблем</th>
-                <th>Статус</th>
-                <th>Решение</th>
+                <td>${device.device_name}</td>
+                <td>${device.os_version}</td>
+                <td>${device.root_detected}</td>
+                <td>${device.accessibility_enabled}</td>
+                <td>${device.overlay_enabled}</td>
+                <td>${device.problems_count}</td>
+                <td><span class="${statusClass}">${device.status}</span></td>
+                <td>${device.result}</td>
               </tr>
-            </thead>
-
-            <tbody id="deviceTable">
-              {% for device in devices %}
-              <tr>
-                <td>{{ device.device_name }}</td>
-                <td>{{ device.os_version }}</td>
-                <td>{{ device.root_detected }}</td>
-                <td>{{ device.accessibility_enabled }}</td>
-                <td>{{ device.overlay_enabled }}</td>
-                <td>{{ device.problems_count }}</td>
-                <td>{{ device.status }}</td>
-                <td>{{ device.result }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Диаграмма количества проблем по устройствам -->
-      <div class="card mt-4">
-        <div class="card-header">
-          Диаграмма количества проблем по устройствам
-        </div>
-        <div class="card-body">
-          <canvas id="problemsChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Круговая диаграмма безопасных и небезопасных устройств -->
-      <div class="card mt-4">
-        <div class="card-header">
-          Соотношение безопасных и небезопасных устройств
-        </div>
-        <div class="card-body">
-          <canvas id="statusChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Диаграмма распределения угроз -->
-      <div class="card mt-4">
-        <div class="card-header">
-          Распределение выявленных угроз по типам
-        </div>
-        <div class="card-body">
-          <canvas id="threatChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // Начальные данные передаются из Django-шаблона
-      let devices = [
-        {% for device in devices %}
-        {
-          device_name: "{{ device.device_name }}",
-          os_version: {{ device.os_version }},
-          os_secure: "{{ device.os_secure }}" === "True",
-          root_detected: "{{ device.root_detected }}" === "True",
-          accessibility_enabled: "{{ device.accessibility_enabled }}" === "True",
-          overlay_enabled: "{{ device.overlay_enabled }}" === "True",
-          screen_control_enabled: "{{ device.screen_control_enabled }}" === "True",
-          digital_signature_valid: "{{ device.digital_signature_valid }}" === "True",
-          files_modified: "{{ device.files_modified }}" === "True",
-          problems_count: {{ device.problems_count }},
-          status: "{{ device.status }}",
-          result: "{{ device.result }}",
-          reasons: "{{ device.reasons }}"
-        },
-        {% endfor %}
-      ];
-
-      let problemsChart;
-      let statusChart;
-      let threatChart;
-
-      function toBoolean(value) {
-        return value === "true";
-      }
-
-      // Проверка устройства по правилам контейнера безопасности
-      function checkDevice(device) {
-        let reasons = [];
-        let threats = [];
-
-        if (device.os_version < 10) {
-          reasons.push("Версия ОС ниже допустимой");
-          threats.push("Версия ОС");
-        }
-
-        if (device.os_secure === false) {
-          reasons.push("Состояние ОС небезопасно");
-          threats.push("Состояние ОС");
-        }
-
-        if (device.root_detected === true) {
-          reasons.push("Обнаружены признаки root/jailbreak");
-          threats.push("Root/Jailbreak");
-        }
-
-        if (device.accessibility_enabled === true) {
-          reasons.push("Включена служба Accessibility");
-          threats.push("Accessibility");
-        }
-
-        if (device.overlay_enabled === true) {
-          reasons.push("Обнаружено overlay-наложение поверх экрана");
-          threats.push("Overlay");
-        }
-
-        if (device.screen_control_enabled === true) {
-          reasons.push("Обнаружено управление экраном");
-          threats.push("Управление экраном");
-        }
-
-        if (device.digital_signature_valid === false) {
-          reasons.push("Цифровая подпись приложения недействительна");
-          threats.push("Цифровая подпись");
-        }
-
-        if (device.files_modified === true) {
-          reasons.push("Обнаружена модификация файлов приложения");
-          threats.push("Модификация файлов");
-        }
-
-        device.problems_count = reasons.length;
-        device.status = reasons.length === 0 ? "Безопасно" : "Небезопасно";
-        device.result = reasons.length === 0 ? "Операция подписания разрешена" : "Операция подписания заблокирована";
-        device.reasons = reasons.length === 0 ? "Нарушений не обнаружено" : reasons.join("; ");
-        device.threats = threats;
-
-        return device;
-      }
-
-      // Добавление нового устройства из формы
-      function addDevice() {
-        let device = {
-          device_name: document.getElementById("deviceName").value,
-          os_version: Number(document.getElementById("osVersion").value),
-          os_secure: toBoolean(document.getElementById("osSecure").value),
-          root_detected: toBoolean(document.getElementById("rootDetected").value),
-          accessibility_enabled: toBoolean(document.getElementById("accessibilityEnabled").value),
-          overlay_enabled: toBoolean(document.getElementById("overlayEnabled").value),
-          screen_control_enabled: toBoolean(document.getElementById("screenControlEnabled").value),
-          digital_signature_valid: toBoolean(document.getElementById("digitalSignatureValid").value),
-          files_modified: toBoolean(document.getElementById("filesModified").value)
-        };
-
-        let checkedDevice = checkDevice(device);
-        devices.push(checkedDevice);
-
-        updateTable();
-        updateSummary();
-        updateCharts();
-      }
-
-      // Обновление таблицы результатов
-      function updateTable() {
-        let table = document.getElementById("deviceTable");
-        table.innerHTML = "";
-
-        devices.forEach(function(device) {
-          table.innerHTML += `
-            <tr>
-              <td>${device.device_name}</td>
-              <td>${device.os_version}</td>
-              <td>${device.root_detected}</td>
-              <td>${device.accessibility_enabled}</td>
-              <td>${device.overlay_enabled}</td>
-              <td>${device.problems_count}</td>
-              <td>${device.status}</td>
-              <td>${device.result}</td>
-            </tr>
-          `;
-        });
-      }
-
-      // Обновление сводных чисел
-      function updateSummary() {
-        let safe = devices.filter(device => device.status === "Безопасно").length;
-        let unsafe = devices.filter(device => device.status === "Небезопасно").length;
-
-        document.getElementById("totalDevices").innerText = devices.length;
-        document.getElementById("safeDevices").innerText = safe;
-        document.getElementById("unsafeDevices").innerText = unsafe;
-      }
-
-      // Подсчет угроз по типам
-      function getThreatSummary() {
-        let summary = {
-          "Версия ОС": 0,
-          "Состояние ОС": 0,
-          "Root/Jailbreak": 0,
-          "Accessibility": 0,
-          "Overlay": 0,
-          "Управление экраном": 0,
-          "Цифровая подпись": 0,
-          "Модификация файлов": 0
-        };
-
-        devices.forEach(function(device) {
-          let checked = checkDevice(device);
-
-          checked.threats.forEach(function(threat) {
-            summary[threat] += 1;
+            `;
           });
-        });
+        }
 
-        return summary;
-      }
+        // Обновление сводных чисел
+        function updateSummary() {
+          let safe = devices.filter(device => device.status === "Безопасно").length;
+          let unsafe = devices.filter(device => device.status === "Небезопасно").length;
 
-      // Построение и обновление диаграмм
-      function updateCharts() {
-        let deviceNames = devices.map(device => device.device_name);
-        let problemsCounts = devices.map(device => device.problems_count);
+          document.getElementById("totalDevices").innerText = devices.length;
+          document.getElementById("safeDevices").innerText = safe;
+          document.getElementById("unsafeDevices").innerText = unsafe;
+        }
 
-        let safe = devices.filter(device => device.status === "Безопасно").length;
-        let unsafe = devices.filter(device => device.status === "Небезопасно").length;
+        // Подсчет угроз по типам
+        function getThreatSummary() {
+          let summary = {
+            "Версия ОС": 0,
+            "Состояние ОС": 0,
+            "Root/Jailbreak": 0,
+            "Accessibility": 0,
+            "Overlay": 0,
+            "Управление экраном": 0,
+            "Цифровая подпись": 0,
+            "Модификация файлов": 0
+          };
 
-        let threatSummary = getThreatSummary();
-        let threatLabels = Object.keys(threatSummary);
-        let threatValues = Object.values(threatSummary);
+          devices.forEach(function(device) {
+            let checked = checkDevice(device);
 
-        if (problemsChart) problemsChart.destroy();
-        if (statusChart) statusChart.destroy();
-        if (threatChart) threatChart.destroy();
+            checked.threats.forEach(function(threat) {
+              summary[threat] += 1;
+            });
+          });
 
-        problemsChart = new Chart(document.getElementById("problemsChart"), {
-          type: "bar",
-          data: {
-            labels: deviceNames,
-            datasets: [{
-              label: "Количество проблем",
-              data: problemsCounts
-            }]
-          }
-        });
+          return summary;
+        }
 
-        statusChart = new Chart(document.getElementById("statusChart"), {
-          type: "pie",
-          data: {
-            labels: ["Безопасно", "Небезопасно"],
-            datasets: [{
-              label: "Статус устройств",
-              data: [safe, unsafe]
-            }]
-          }
-        });
+        // Построение и обновление диаграмм
+        function updateCharts() {
+          let deviceNames = devices.map(device => device.device_name);
+          let problemsCounts = devices.map(device => device.problems_count);
 
-        threatChart = new Chart(document.getElementById("threatChart"), {
-          type: "bar",
-          data: {
-            labels: threatLabels,
-            datasets: [{
-              label: "Количество обнаружений",
-              data: threatValues
-            }]
-          }
-        });
-      }
+          let safe = devices.filter(device => device.status === "Безопасно").length;
+          let unsafe = devices.filter(device => device.status === "Небезопасно").length;
 
-      // Первичная отрисовка диаграмм при загрузке страницы
-      updateCharts();
-    </script>
+          let threatSummary = getThreatSummary();
+          let threatLabels = Object.keys(threatSummary);
+          let threatValues = Object.values(threatSummary);
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
-</html>
+          if (problemsChart) problemsChart.destroy();
+          if (statusChart) statusChart.destroy();
+          if (threatChart) threatChart.destroy();
+
+          problemsChart = new Chart(document.getElementById("problemsChart"), {
+            type: "bar",
+            data: {
+              labels: deviceNames,
+              datasets: [{
+                label: "Количество проблем",
+                data: problemsCounts,
+                backgroundColor: "#2563eb",
+                borderColor: "#1e40af",
+                borderWidth: 1,
+                borderRadius: 8
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+
+          statusChart = new Chart(document.getElementById("statusChart"), {
+            type: "doughnut",
+            data: {
+              labels: ["Безопасно", "Небезопасно"],
+              datasets: [{
+                label: "Статус устройств",
+                data: [safe, unsafe],
+                backgroundColor: ["#16a34a", "#dc2626"],
+                borderColor: "#ffffff",
+                borderWidth: 3
+              }]
+            },
+            options: {
+              responsive: true,
+              cutout: "65%",
+              plugins: {
+                legend: {
+                  position: "bottom"
+                }
+              }
+            }
+          });
+
+          threatChart = new Chart(document.getElementById("threatChart"), {
+            type: "bar",
+            data: {
+              labels: threatLabels,
+              datasets: [{
+                label: "Количество обнаружений",
+                data: threatValues,
+                backgroundColor: "#f97316",
+                borderColor: "#c2410c",
+                borderWidth: 1,
+                borderRadius: 8
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        }
+
+        // Первичная отрисовка диаграмм при загрузке страницы
+        updateCharts();
+      </script>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+      </html>
