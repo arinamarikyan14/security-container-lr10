@@ -1,0 +1,121 @@
+{
+  "uid": "security-container-quality",
+  "title": "Security Container - Мониторинг качества",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Всего HTTP-запросов",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(security_http_requests_total)",
+          "legendFormat": "HTTP-запросы"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Всего устройств",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "security_devices_total",
+          "legendFormat": "Устройства"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Безопасные устройства",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "security_safe_devices_total",
+          "legendFormat": "Безопасные"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Небезопасные устройства",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "security_unsafe_devices_total",
+          "legendFormat": "Небезопасные"
+        }
+      ]
+    },
+    {
+      "type": "gauge",
+      "title": "Доля небезопасных устройств, %",
+      "gridPos": { "x": 0, "y": 4, "w": 8, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "(security_unsafe_devices_total / security_devices_total) * 100",
+          "legendFormat": "Доля угроз"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Запросы по минутам",
+      "gridPos": { "x": 8, "y": 4, "w": 8, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(increase(security_http_requests_total[1m]))",
+          "legendFormat": "Запросы"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Время отклика, P95",
+      "gridPos": { "x": 16, "y": 4, "w": 8, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(security_http_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "P95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      }
+    },
+    {
+      "type": "barchart",
+      "title": "Количество угроз по типам",
+      "gridPos": { "x": 0, "y": 10, "w": 24, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "security_threats_total",
+          "legendFormat": "{{threat_type}}"
+        }
+      ]
+    }
+  ]
+}

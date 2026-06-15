@@ -1,0 +1,86 @@
+services:
+  security-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: security-app
+    environment:
+      POSTGRES_DB: security_db
+      POSTGRES_USER: security_user
+      POSTGRES_PASSWORD: security_password
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    networks:
+      - security-network
+
+  nginx:
+    image: nginx:latest
+    container_name: security-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - security-app
+    networks:
+      - security-network
+
+  postgres:
+    image: postgres:16
+    container_name: security-postgres
+    environment:
+      POSTGRES_DB: security_db
+      POSTGRES_USER: security_user
+      POSTGRES_PASSWORD: security_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - security-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: security-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - security-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: security-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - security-app
+    networks:
+      - security-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: security-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - security-network
+
+volumes:
+  postgres_data:
+
+networks:
+  security-network:
+    driver: bridge
